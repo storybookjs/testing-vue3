@@ -13,13 +13,13 @@ This library should be installed as one of your project's `devDependencies`:
 via [npm](https://www.npmjs.com/)
 
 ```
-npm install --save-dev @storybook/testing-vue
+npm install --save-dev @storybook/testing-vue3
 ```
 
 or via [yarn](https://classic.yarnpkg.com/)
 
 ```
-yarn add --dev @storybook/testing-vue
+yarn add --dev @storybook/testing-vue3
 ```
 
 ## Setup
