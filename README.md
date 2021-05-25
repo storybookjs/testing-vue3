@@ -50,7 +50,7 @@ If you have global decorators/parameters/etc and want them applied to your stori
 
 ```tsx
 // setupFile.js <-- this will run before the tests in jest.
-import { setGlobalConfig } from '@storybook/testing-vue';
+import { setGlobalConfig } from '@storybook/testing-vue3';
 import * as globalStorybookConfig from './.storybook/preview'; // path of your preview.js file
 
 setGlobalConfig(globalStorybookConfig);
@@ -75,7 +75,7 @@ If you use the composed story (e.g. PrimaryButton), the component will render wi
 
 ```tsx
 import { render, screen } from '@testing-library/vue';
-import { composeStories } from '@storybook/testing-vue';
+import { composeStories } from '@storybook/testing-vue3';
 import * as stories from './Button.stories'; // import all stories from the stories file
 
 // Every component that is returned maps 1:1 with the stories, but they already contain all decorators from story level, meta level and global level.
@@ -102,7 +102,7 @@ You can use `composeStory` if you wish to apply it for a single story rather tha
 
 ```tsx
 import { render, screen } from '@testing-library/vue';
-import { composeStory } from '@storybook/testing-vue';
+import { composeStory } from '@storybook/testing-vue3';
 import Meta, { Primary as PrimaryStory } from './Button.stories';
 
 // Returns a component that already contain all decorators from story level, meta level and global level.
