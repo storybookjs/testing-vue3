@@ -1171,13 +1171,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cypress/vue@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@cypress/vue/-/vue-3.0.1.tgz#9899718dfb8608f98c343fe35a7cfc0a50376011"
-  integrity sha512-7aSdwbtvCJnKR7MDZdJs3TB718LNo44JXvIidrtcZacOSPXjahvkZ8nQCyLIt/owKBFFaV4dvSn267Lq4ZIbzQ==
-  dependencies:
-    "@vue/test-utils" "^2.0.0-rc.4"
-
 "@emotion/cache@^10.0.27":
   version "10.0.29"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-10.0.29.tgz#87e7e64f412c060102d589fe7c6dc042e6f9d1e0"
@@ -1757,7 +1750,7 @@
     webpack "^4.44.1"
     webpack-bundle-analyzer "^4.4.2"
 
-"@storybook/addons@6.2.9", "@storybook/addons@^6.2.9":
+"@storybook/addons@6.2.9", "@storybook/addons@^6.0.0":
   version "6.2.9"
   resolved "https://registry.yarnpkg.com/@storybook/addons/-/addons-6.2.9.tgz#b7ba2b9f0e15b852c7d6b57d04fb0a493c57477c"
   integrity sha512-GnmEKbJwiN1jncN9NSA8CuR1i2XAlasPcl/Zn0jkfV9WitQeczVcJCPw86SGH84AD+tTBCyF2i9UC0KaOV1YBQ==
@@ -1896,7 +1889,7 @@
     ts-dedent "^2.0.0"
     util-deprecate "^1.0.2"
 
-"@storybook/client-api@6.2.9", "@storybook/client-api@^6.2.9":
+"@storybook/client-api@6.2.9", "@storybook/client-api@^6.0.0":
   version "6.2.9"
   resolved "https://registry.yarnpkg.com/@storybook/client-api/-/client-api-6.2.9.tgz#f0bb44e9b2692adfbf30d7ff751c6dd44bcfe1ce"
   integrity sha512-aLvEUVkbvv6Qo/2mF4rFCecdqi2CGOUDdsV1a6EFIVS/9gXFdpirsOwKHo9qNjacGdWPlBYGCUcbrw+DvNaSFA==
@@ -2203,7 +2196,7 @@
     resolve-from "^5.0.0"
     store2 "^2.12.0"
 
-"@storybook/vue3@^6.2.9":
+"@storybook/vue3@^6.0.0":
   version "6.2.9"
   resolved "https://registry.yarnpkg.com/@storybook/vue3/-/vue3-6.2.9.tgz#b21a492285184200a11bffb07818d9d58d1dff84"
   integrity sha512-YPeMyYVc29EKqi3tDlLe9eSQzGeW+RAHnXWK1X40x/yj8dHicJurshkWkpOKaFv4wQA7jRJnHGEGMVtgeOxKSQ==
@@ -2676,11 +2669,6 @@
   version "3.0.11"
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.0.11.tgz#20d22dd0da7d358bb21c17f9bde8628152642c77"
   integrity sha512-b+zB8A2so8eCE0JsxjL24J7vdGl8rzPQ09hZNhystm+KqSbKcAej1A+Hbva1rCMmTTqA+hFnUSDc5kouEo0JzA==
-
-"@vue/test-utils@^2.0.0-rc.4":
-  version "2.0.0-rc.6"
-  resolved "https://registry.yarnpkg.com/@vue/test-utils/-/test-utils-2.0.0-rc.6.tgz#d0aac24d20450d379e183f70542c0822670b8783"
-  integrity sha512-0cnQBVH589PwgqWpyv1fgCAz+9Ram/MsvN3ZEAEVXi1aPuhUa22EudGc0WezQ9PKwR+L40NrBmt3JBXE2tSRRQ==
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
@@ -12629,7 +12617,7 @@ vue-inbrowser-compiler-utils@^4.39.0:
   dependencies:
     camelcase "^5.3.1"
 
-vue@^3.0.11:
+vue@^3.0.0:
   version "3.0.11"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.0.11.tgz#c82f9594cbf4dcc869241d4c8dd3e08d9a8f4b5f"
   integrity sha512-3/eUi4InQz8MPzruHYSTQPxtM3LdZ1/S/BvaU021zBnZi0laRUyH6pfuE4wtUeLvI8wmUNwj5wrZFvbHUXL9dw==
