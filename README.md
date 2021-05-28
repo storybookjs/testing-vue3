@@ -1,10 +1,13 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/1671563/119191947-9ba7a400-ba7f-11eb-8658-2b7056f1cd12.png" alt="Storybook Testing Vue" width="100" />
+  <img src="https://user-images.githubusercontent.com/1671563/119191947-9ba7a400-ba7f-11eb-8658-2b7056f1cd12.png" alt="Storybook Testing Vue3" width="100" />
 </p>
 
-<p align="center">Testing utilities that allow you to reuse your stories in your unit tests</p>
+<p align="center">Testing utilities that allow you to reuse your Vue 3 stories in your unit tests</p>
 
 <br/>
+
+> ⚠️ This library is for **Vue 3** projects. If you're using Storybook with **Vue 2**, please check [@storybook/testing-vue](https://github.com/storybookjs/testing-vue) instead!
+
 
 ## Installation
 
