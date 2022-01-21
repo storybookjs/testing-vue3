@@ -5,7 +5,8 @@ import type {
   ContextedStory,
   GlobalConfig,
   StoriesWithPartialProps,
-  StoryFnVueReturnType,  
+  StoryFnVueReturnType,
+  TestingStoryPlayContext
 } from "./types";
 import { isInvalidStory } from "./utils";
 
@@ -93,6 +94,14 @@ export function composeStory<GenericArgs>(
       }
     });
   };
+
+  const boundPlay = ({
+    ...extraContext
+  }: TestingStoryPlayContext<GenericArgs>) => {
+    return story.play?.({ ...context, ...extraContext });
+  };
+
+  composedStory.play = boundPlay;
 
   return composedStory as ContextedStory<GenericArgs>;
 }
