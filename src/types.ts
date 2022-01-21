@@ -1,10 +1,10 @@
-import type { ComponentOptions, ConcreteComponent } from "vue";
 import type {
   ArgTypes,
-  Parameters as SbParameters,
   BaseDecorators,
+  Parameters as SbParameters
 } from "@storybook/addons";
-import type { Story } from "@storybook/vue3";
+import { Story } from "@storybook/vue3";
+import type { ComponentOptions, ConcreteComponent } from "vue";
 
 export type StoryFnVueReturnType = string | ComponentOptions<any>;
 /**
@@ -20,7 +20,9 @@ export type GlobalConfig = {
   [key: string]: any;
 };
 
-export type Head<T extends any[]> = T extends [...infer Head, any] ? Head : any[];
+export type Head<T extends any[]> = T extends [...infer Head, any]
+  ? Head
+  : any[];
 
 /**
  * A StoryFn where the context is already curried
@@ -28,7 +30,7 @@ export type Head<T extends any[]> = T extends [...infer Head, any] ? Head : any[
  */
 export type ContextedStory<GenericArgs> = (
   ...params: Partial<Head<Parameters<Story<Partial<GenericArgs>>>>>
-) => ConcreteComponent;
+) => ConcreteComponent
 
 /**
  * T represents the whole es module of a stories file. K of T means named exports (basically the Story type)

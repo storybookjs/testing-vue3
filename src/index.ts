@@ -1,8 +1,13 @@
-import { combineParameters } from "@storybook/client-api";
-import type { Story, Meta, StoryContext } from "@storybook/vue3";
-import type { StoryFnVueReturnType, ContextedStory, GlobalConfig, StoriesWithPartialProps } from "./types";
+import { combineParameters, defaultDecorateStory } from "@storybook/client-api";
+import type { Meta, Story, StoryContext, VueFramework } from "@storybook/vue3";
 
-import decorateStory from "./decorateStory";
+import type {
+  ContextedStory,
+  GlobalConfig,
+  StoriesWithPartialProps,
+  StoryFnVueReturnType,  
+} from "./types";
+import { isInvalidStory } from "./utils";
 
 let globalStorybookConfig: GlobalConfig = {};
 
@@ -15,20 +20,20 @@ export function composeStory<GenericArgs>(
   meta: Meta,
   globalConfig: GlobalConfig = globalStorybookConfig
 ) {
-  if (typeof story !== "function") {
+  if (isInvalidStory(story)) {
     throw new Error(
       `Cannot compose story due to invalid format. @storybook/testing-vue expected a function but received ${typeof story} instead.`
     );
   }
 
-  if ((story as any).story !== undefined) {
+  if (story.story !== undefined) {
     throw new Error(
       `StoryFn.story object-style annotation is not supported. @storybook/testing-vue expects hoisted CSF stories.
            https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#hoisted-csf-annotations`
     );
   }
 
-  const finalStoryFn = (context: StoryContext) => {
+  const finalStoryFn = (context: StoryContext<VueFramework, GenericArgs>) => {
     const { passArgsFirst = true } = context.parameters;
     if (!passArgsFirst) {
       throw new Error(
@@ -42,10 +47,10 @@ export function composeStory<GenericArgs>(
   const combinedDecorators = [
     ...(story.decorators || []),
     ...(meta?.decorators || []),
-    ...(globalConfig?.decorators || []),
+    ...(globalConfig?.decorators || [])
   ];
 
-  const decorated = decorateStory(
+  const decorated = defaultDecorateStory<VueFramework>(
     finalStoryFn as any,
     combinedDecorators as any
   );
@@ -59,30 +64,43 @@ export function composeStory<GenericArgs>(
     return acc;
   }, {} as Record<string, { defaultValue: any }>);
 
-  return ((extraArgs: Record<string, any> = {}) =>
-    decorated({
-      id: "",
-      kind: "",
-      name: "",
-      argTypes: globalConfig.argTypes || {},
-      globals: defaultGlobals,
-      parameters: combineParameters(
-        globalConfig.parameters || {},
-        meta?.parameters || {},
-        story.parameters || {}
-      ),
+  const combinedParameters = combineParameters(
+    globalConfig.parameters || {},
+    meta?.parameters || {},
+    story.parameters || {}
+  );
+
+  const combinedArgs = {
+    ...(meta?.args || {}),
+    ...story.args
+  } as GenericArgs;
+
+  const context = {
+    id: "",
+    kind: "",
+    name: "",
+    argTypes: globalConfig.argTypes || {},
+    globals: defaultGlobals,
+    parameters: combinedParameters
+  } as StoryContext<VueFramework, GenericArgs>;
+
+  const composedStory = (extraArgs: Partial<GenericArgs>) => {
+    return decorated({
+      ...context,
       args: {
-        ...(meta?.args || {}),
-        ...story.args,
-        ...extraArgs,
-      },
-    })) as ContextedStory<GenericArgs>;
+        ...combinedArgs,
+        ...extraArgs
+      }
+    });
+  };
+
+  return composedStory as ContextedStory<GenericArgs>;
 }
 
 export function composeStories<
   T extends { default: Meta; __esModule?: boolean }
 >(storiesImport: T, globalConfig?: GlobalConfig): StoriesWithPartialProps<T> {
-  const { default: meta, __esModule, ...stories } = storiesImport;
+  const { default: meta, ...stories } = storiesImport;
   // Compose an object containing all processed stories passed as parameters
   const composedStories = Object.entries(stories).reduce(
     (storiesMap, [key, story]) => {
