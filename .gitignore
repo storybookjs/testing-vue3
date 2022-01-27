@@ -6,3 +6,4 @@ build-storybook.log
 .env
 
 example/node_modules
+example/cypress/videos

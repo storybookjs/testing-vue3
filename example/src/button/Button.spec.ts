@@ -7,6 +7,7 @@ const { Primary, Large } = composeStories(stories);
 
 describe("<Button />", () => {
   it("Primary", () => {
+    console.log({ a: Primary() });
     mount(Primary());
   });
   it("Large", () => {
