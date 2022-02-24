@@ -1,5 +1,8 @@
 import { combineParameters, defaultDecorateStory } from "@storybook/client-api";
 import type { Meta, Story, StoryContext, VueFramework } from "@storybook/vue3";
+import addons, { mockChannel } from '@storybook/addons';
+import type { StoryFnVueReturnType, ContextedStory, GlobalConfig, StoriesWithPartialProps } from "./types";
+
 
 import type {
   ContextedStory,
@@ -11,6 +14,9 @@ import type {
 import { isInvalidStory } from "./utils";
 
 let globalStorybookConfig: GlobalConfig = {};
+
+// Some addons use the channel api to communicate between manager/preview, and this is a client only feature, therefore we must mock it.
+addons.setChannel(mockChannel());
 
 export function setGlobalConfig(config: GlobalConfig) {
   globalStorybookConfig = config;
