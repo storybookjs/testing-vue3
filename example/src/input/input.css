@@ -1,0 +1,6 @@
+.input-box {
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+  padding: 1rem;
+}
