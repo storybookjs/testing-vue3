@@ -1,4 +1,4 @@
-import type { Story } from "@storybook/vue3";
+import type { StoryFn } from "@storybook/vue3";
 import MyButton from "./Button.vue";
 
 export default {
@@ -18,45 +18,45 @@ export default {
   ],
 };
 
-const Template: Story<{
+const Template: StoryFn<{
   label: string;
   primary?: boolean;
   size?: "large" | "small";
 }> = (args) => ({
-  // Components used in your story `template` are defined in the `components` object
   components: { MyButton },
-  // The story's `args` need to be mapped into the template through the `setup()` method
   setup() {
-    return { args };
+    return { args }
   },
-  // And then the `args` are bound to your component with `v-bind="args"`
   template: '<my-button v-bind="args" />',
-});
+})
 
-export const Primary = Template.bind({});
-Primary.args = {
-  primary: true,
-  label: "Button",
-};
+export const Primary = {
+  render: Template,
+  args: {
+    primary: true,
+    label: "Button",
+  }
+}
 
-export const Secondary = Template.bind({});
-Secondary.args = {
-  label: "Button",
-};
+export const Secondary = {
+  render: Template,
+  args: {
+    label: "Button",
+  }
+}
 
-export const Large = Template.bind({});
-Large.args = {
-  size: "large",
-  label: "Button",
-};
-Large.decorators = [
-  () => ({
-    template: '<div style="border: 4px solid green">story<story /></div>',
-  }),
-];
+export const Large = {
+  render: Template,
+  args: {
+    size: "large",
+    label: "Button",
+  }
+}
 
-export const Small = Template.bind({});
-Small.args = {
-  size: "small",
-  label: "Button",
-};
+export const Small = {
+  render: Template,
+  args: {
+    size: "small",
+    label: "Button",
+  }
+}
