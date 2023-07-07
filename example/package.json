@@ -28,6 +28,7 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "expect-type": "^0.16.0",
     "react": "^18.2.0",
+    "jsdom": "^22.1.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.0.26",
     "typescript": "^5.0.2",
