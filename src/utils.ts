@@ -1,18 +1,39 @@
-import type { StoryFn } from '@storybook/vue3';
-import { h } from "vue";
+import type { VueRenderer } from '@storybook/vue3';
+import { h, reactive } from 'vue';
 import type { TestingStory } from './types';
+import type { ArgsStoryFn, StoryContext, Args } from '@storybook/types';
 
 const invalidStoryTypes = new Set(['string', 'number', 'boolean', 'symbol']);
 
-export const globalRender: StoryFn = (args, { parameters }) => {
-  if (!parameters.component) {
-    throw new Error(`
-      Could not render story due to missing 'component' property in Meta.
-    `);
+export const globalRender: ArgsStoryFn<VueRenderer> = (props, context) => {
+  const { id, component: Component } = context;
+  if (!Component) {
+    throw new Error(
+      `Unable to render story ${id} as the component annotation is missing from the default export`
+    );
   }
-  const Component = parameters.component
-  return h(Component, args);
+
+  return h(Component, props, generateSlots(context));
 };
+
+
+/**
+ * generate slots for default story without render function template
+ * @param context
+ */
+
+function generateSlots(context: StoryContext<VueRenderer, Args>) {
+  const { argTypes } = context;
+  const slots = Object.entries(argTypes)
+    .filter(([key, value]) => argTypes[key]?.table?.category === 'slots')
+    .map(([key, value]) => {
+      const slotValue = context.args[key];
+      return [key, typeof slotValue === 'function' ? slotValue : () => slotValue];
+    });
+
+    // @ts-ignore not sure why it's failing
+  return reactive(Object.fromEntries(slots));
+}
 
 export const isInvalidStory = (story?: any) => (!story || Array.isArray(story) || invalidStoryTypes.has(typeof story))
 

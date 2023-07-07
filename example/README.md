@@ -1,19 +1,21 @@
-# cy-ct-vue3-ts-storybook
+<h1>Vue3 Vite (TS)</h1>
 
-## Project setup
-```
-yarn install
-```
+<p>
+  This is project generated to serve as a reproduction starter for Storybook.
+</p>
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+<a  href="https://stackblitz.com/github/storybookjs/sandboxes/tree/next/vue3-vite/default-ts/after-storybook?preset=node=">
+  View it in Stackblitz
+</a>
 
-### Compiles and minifies for production
-```
-yarn build
-```
+<h3>Testing instructions</h3>
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+<p>Install dependencies:</p>
+<pre>
+  yarn
+</pre>
+
+<p>Run Storybook:</p>
+<pre>
+  yarn storybook
+</pre>
