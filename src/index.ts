@@ -13,7 +13,8 @@ import type {
 import { deprecate } from '@storybook/client-logger';
 import type { VueRenderer, Meta } from "@storybook/vue3";
 
-import { globalRender as render } from './utils';
+//import { globalRender as render } from './utils';
+import { render } from './utils';  // use current implementation of render function in  @storybook/vue3
 
 /** Function that sets the global config of your storybook. The global config is the preview module of your .storybook folder.
  *
