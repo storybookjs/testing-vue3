@@ -24,8 +24,8 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "yarn build && yarn --cwd example cy:run",
-    "test:watch": "yarn build && yarn --cwd example cy",
+    "test": "yarn build && yarn --cwd example yarn test",
+    "test:watch": "yarn build && yarn --cwd example vitest",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
@@ -45,6 +45,7 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.1.0",
     "typescript": "^4.9.0",
+    "vitest": "^0.33.0",
     "vue": "^3.0.0"
   },
   "peerDependencies": {
@@ -59,5 +60,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "caniuse-lite": "^1.0.30001517"
   }
 }
