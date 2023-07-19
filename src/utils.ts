@@ -15,6 +15,22 @@ export const globalRender: ArgsStoryFn<VueRenderer> = (props, context) => {
 
   return h(Component, props, generateSlots(context));
 };
+/** 
+ * we should test  againt the global  render in  @storybook/vue3
+ * this is  the current implementation in  @storybook/vue3 
+ *   which i always disagree with because it clearly breaks  the  sematic of render function (in gerenrale)
+ *  and leads to  a lot of  confusion and bugs
+ */
+export const render : ArgsStoryFn<VueRenderer> = (props, context) => {
+  const { id, component: Component } = context;
+  if (!Component) {
+    throw new Error(
+      `Unable to render story ${id} as the component annotation is missing from the default export`
+    );
+  }
+  
+  return () => h(Component, props, generateSlots(context));
+}
 
 
 /**
