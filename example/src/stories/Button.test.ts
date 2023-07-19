@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/vue";
 import * as stories from "./Button.stories";
-import Button from "./Button";
+import Button from "./Button.vue";
 import { test, vi } from "vitest";
 import { composeStories, composeStory, setProjectAnnotations } from "../../../dist";
 import { expectTypeOf } from 'expect-type';
