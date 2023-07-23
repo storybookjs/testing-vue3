@@ -24,8 +24,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "yarn build && yarn --cwd example yarn test",
-    "test:watch": "yarn build && yarn --cwd example vitest",
+    "test": "yarn build && cd ./example && yarn test",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
