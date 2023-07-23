@@ -55,7 +55,7 @@ describe('projectAnnotations', () => {
     expect(buttonElement).toBeInTheDocument();
   });
 
-  test.only('renders with custom projectAnnotations via setProjectAnnotations', () => {
+  test('renders with custom projectAnnotations via setProjectAnnotations', () => {
     setProjectAnnotations([{ parameters: { injected: true } }]);
     const Story = composeStory(stories.CSF2StoryWithLocale, stories.default);
     console.log({params: Story.parameters})
