@@ -1,3 +1,5 @@
+// TODO: this file is not used, but it's important to keep as reference
+// for changes that need to be made to the source of composeStories within @storybook/preview-api
 import { isExportStory,  } from '@storybook/csf';
 import type {
   Renderer,
@@ -13,24 +15,50 @@ import type {
   PreparedStoryFn,
 } from '@storybook/types';
 
-import { HooksContext , composeConfigs,prepareStory ,normalizeStory } from '@storybook/preview-api';
+import { HooksContext, composeConfigs, prepareStory, normalizeStory } from '@storybook/preview-api';
 
-import { prepareContext, normalizeComponentAnnotations ,getValuesFromArgTypes , normalizeProjectAnnotations } from '@storybook/preview-api/dist/store';
+import { prepareContext, normalizeComponentAnnotations, getValuesFromArgTypes, normalizeProjectAnnotations } from '@storybook/preview-api/dist/store';
 
-
-let GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS = composeConfigs([]);
+let GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS = composeAnnotations([]);
 
 export function setProjectAnnotations<TRenderer extends Renderer = Renderer>(
   projectAnnotations: ProjectAnnotations<TRenderer> | ProjectAnnotations<TRenderer>[]
 ) {
-  const annotations = Array.isArray(projectAnnotations) ? projectAnnotations : [projectAnnotations];
-  GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS = composeConfigs(annotations);
+  GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS = composeAnnotations<TRenderer>(projectAnnotations);
+}
+
+function composeAnnotations<TRenderer extends Renderer = Renderer>(annotations: ProjectAnnotations<TRenderer> | ProjectAnnotations<TRenderer>[]) {
+  return composeConfigs(Array.isArray(annotations) ? annotations : [annotations]);
+}
+
+function deepMerge(target: any, source: any){
+  const merged = { ...target };
+  
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      if (Array.isArray(source[key])) {
+        merged[key] = Array.isArray(merged[key])
+          ? (merged[key] as any[]).concat(source[key] as any[])
+          : source[key];
+      } else if (typeof source[key] === 'object' && source[key] !== null) {
+        merged[key] =
+          typeof merged[key] === 'object' && merged[key] !== null
+            ? { ...merged[key] }
+            : ({ ...source[key] });
+        deepMerge(merged[key], source[key]);
+      } else {
+        merged[key] = source[key];
+      }
+    }
+  }
+
+  return merged;
 }
 
 export function composeStory<TRenderer extends Renderer = Renderer, TArgs extends Args = Args>(
   storyAnnotations: LegacyStoryAnnotationsOrFn<TRenderer>,
   componentAnnotations: ComponentAnnotations<TRenderer, TArgs>,
-  projectAnnotations: ProjectAnnotations<TRenderer> = GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS as ProjectAnnotations<TRenderer>,
+  projectAnnotations?: ProjectAnnotations<TRenderer>,
   defaultConfig: ProjectAnnotations<TRenderer> = {},
   exportsName?: string
 ): PreparedStoryFn<TRenderer, Partial<TArgs>> {
@@ -57,10 +85,10 @@ export function composeStory<TRenderer extends Renderer = Renderer, TArgs extend
     normalizedComponentAnnotations
   );
 
-  const normalizedProjectAnnotations = normalizeProjectAnnotations<TRenderer>({
-    ...projectAnnotations,
-    ...defaultConfig,
-  });
+  // Needed changes are to deep merge objects, so user defined annotations are passed
+  // but default annotations also remain
+  const composedProjectAnnotations = projectAnnotations ? composeAnnotations(projectAnnotations) : GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS;
+  const normalizedProjectAnnotations = normalizeProjectAnnotations<TRenderer>(deepMerge(composedProjectAnnotations, defaultConfig));
 
   const story = prepareStory<TRenderer>(
     normalizedStory,
@@ -68,7 +96,7 @@ export function composeStory<TRenderer extends Renderer = Renderer, TArgs extend
     normalizedProjectAnnotations
   );
 
-  const defaultGlobals = getValuesFromArgTypes(projectAnnotations.globalTypes);
+  const defaultGlobals = getValuesFromArgTypes(composedProjectAnnotations.globalTypes);
 
   const composedStory = (extraArgs: Partial<TArgs>) => {
     const context: Partial<StoryContext> = {
@@ -80,14 +108,13 @@ export function composeStory<TRenderer extends Renderer = Renderer, TArgs extend
 
     return story.unboundStoryFn(prepareContext(context as StoryContext));
   };
-  console.log(' --- composedStory ', composedStory);
   composedStory.storyName = storyName;
   composedStory.args = story.initialArgs as Partial<TArgs>;
   composedStory.play = story.playFunction as ComposedStoryPlayFn<TRenderer, Partial<TArgs>>;
   composedStory.parameters = story.parameters as Parameters;
   composedStory.id = story.id;
 
-  return composedStory;
+  return composedStory as unknown as PreparedStoryFn<TRenderer, Partial<TArgs>>;
 }
 
 export function composeStories<TModule extends Store_CSFExports>(

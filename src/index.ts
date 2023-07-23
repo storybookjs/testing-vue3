@@ -3,6 +3,7 @@ import {
   composeStories as originalComposeStories,
   setProjectAnnotations as originalSetProjectAnnotations,
 } from '@storybook/preview-api';
+
 import type {
   Args,
   ProjectAnnotations,
@@ -12,9 +13,8 @@ import type {
 } from '@storybook/types';
 import { deprecate } from '@storybook/client-logger';
 import type { VueRenderer, Meta } from "@storybook/vue3";
-
-//import { globalRender as render } from './utils';
-import { render } from './utils';  // use current implementation of render function in  @storybook/vue3
+//@ts-ignore
+import * as defaultProjectAnnotations from "@storybook/vue3/preview";
 
 /** Function that sets the global config of your storybook. The global config is the preview module of your .storybook folder.
  *
@@ -47,11 +47,6 @@ export function setGlobalConfig(
   deprecate(`setGlobalConfig is deprecated. Use setProjectAnnotations instead.`);
   setProjectAnnotations(projectAnnotations);
 }
-
-// This will not be necessary once we have auto preset loading
-const defaultProjectAnnotations: ProjectAnnotations<VueRenderer> = {
-  render,
-};
 
 /**
  * Function that will receive a story along with meta (e.g. a default export from a .stories file)
@@ -90,7 +85,7 @@ export function composeStory<TArgs extends Args = Args>(
     story as ComposedStory<VueRenderer, Args>,
     componentAnnotations,
     projectAnnotations,
-    defaultProjectAnnotations,
+    defaultProjectAnnotations as ProjectAnnotations<VueRenderer>,
     exportsName
   );
 }

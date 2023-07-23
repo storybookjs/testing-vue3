@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/vue";
-import * as stories from "./Button.stories";
+import * as stories from "./stories/Button.stories";
 import Button from "./Button.vue";
 import { test, vi } from "vitest";
-import { composeStories, composeStory, setProjectAnnotations } from "../../../dist";
+import { composeStories, composeStory, setProjectAnnotations } from "../../dist";
 import { expectTypeOf } from 'expect-type';
 import { Meta } from '@storybook/vue3';
 
@@ -33,7 +33,7 @@ test('onclick handler is called', async () => {
 });
 
 test('reuses args from composeStories', () => {
-  const { getByText } = render(CSF3Primary);
+  const { getByText } = render(CSF3Primary());
   const buttonElement = getByText(/foo/i);
   expect(buttonElement).toBeInTheDocument();
 });
@@ -55,9 +55,10 @@ describe('projectAnnotations', () => {
     expect(buttonElement).toBeInTheDocument();
   });
 
-  test('renders with custom projectAnnotations via setProjectAnnotations', () => {
+  test.only('renders with custom projectAnnotations via setProjectAnnotations', () => {
     setProjectAnnotations([{ parameters: { injected: true } }]);
     const Story = composeStory(stories.CSF2StoryWithLocale, stories.default);
+    console.log({params: Story.parameters})
     expect(Story.parameters?.injected).toBe(true);
   });
 });
