@@ -1,134 +1,165 @@
-import {
-  composeStory as originalComposeStory,
-  composeStories as originalComposeStories,
-  setProjectAnnotations as originalSetProjectAnnotations,
-} from '@storybook/preview-api';
-import type {
-  Args,
-  ProjectAnnotations,
-  ComposedStory,
-  Store_CSFExports,
-  StoriesWithPartialProps,
-} from '@storybook/types';
+// Stored for backup purposes, but index.ts should be used instead.
+import { defaultDecorateStory, combineParameters, addons, applyHooks, HooksContext, mockChannel, composeConfigs } from '@storybook/preview-api';
+import type { StoryContext, VueRenderer } from "@storybook/vue3";
+import type { ComponentAnnotations, StoryAnnotations, ProjectAnnotations } from '@storybook/types'
 import { deprecate } from '@storybook/client-logger';
-import type { VueRenderer, Meta } from "@storybook/vue3";
 
-//import { globalRender as render } from './utils';
-import { render } from './utils';  // use current implementation of render function in  @storybook/vue3
+import type { StoriesWithPartialProps, StoryFile, TestingStory, TestingStoryPlayContext } from "./types";
+import { getStoryName, globalRender, isInvalidStory, objectEntries } from './utils';
 
-/** Function that sets the global config of your storybook. The global config is the preview module of your .storybook folder.
- *
- * It should be run a single time, so that your global config (e.g. decorators) is applied to your stories when using `composeStories` or `composeStory`.
- *
- * Example:
- *```jsx
- * // setup.js (for jest)
- * import { setProjectAnnotations } from '@storybook/vue3';
- * import * as projectAnnotations from './.storybook/preview';
- *
- * setProjectAnnotations(projectAnnotations);
- *```
- *
- * @param projectAnnotations - e.g. (import * as projectAnnotations from '../.storybook/preview')
- */
+// Some addons use the channel api to communicate between manager/preview, and this is a client only feature, therefore we must mock it.
+addons.setChannel(mockChannel());
+
+const decorateStory = applyHooks(defaultDecorateStory);
+
+const isValidStoryExport = (storyName: string, nonStoryExportsConfig = {}) => true
+
+let GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS = {};
+
 export function setProjectAnnotations(
   projectAnnotations: ProjectAnnotations<VueRenderer> | ProjectAnnotations<VueRenderer>[]
 ) {
-  originalSetProjectAnnotations<VueRenderer>(projectAnnotations);
+  const annotations = Array.isArray(projectAnnotations) ? projectAnnotations : [projectAnnotations];
+  GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS = composeConfigs(annotations);
 }
 
 /**
- *
  * @deprecated Use setProjectAnnotations instead
  */
 export function setGlobalConfig(
   projectAnnotations: ProjectAnnotations<VueRenderer> | ProjectAnnotations<VueRenderer>[]
 ) {
-  deprecate(`setGlobalConfig is deprecated. Use setProjectAnnotations instead.`);
+  deprecate(`[@storybook/testing-vue3] setGlobalConfig is deprecated. Use setProjectAnnotations instead.`);
   setProjectAnnotations(projectAnnotations);
 }
 
-// This will not be necessary once we have auto preset loading
-const defaultProjectAnnotations: ProjectAnnotations<VueRenderer> = {
-  render,
-};
-
-/**
- * Function that will receive a story along with meta (e.g. a default export from a .stories file)
- * and optionally projectAnnotations e.g. (import * from '../.storybook/preview)
- * and will return a composed component that has all args/parameters/decorators/etc combined and applied to it.
- *
- *
- * It's very useful for reusing a story in scenarios outside of Storybook like unit testing.
- *
- * Example:
- *```jsx
- * import { render } from '@testing-library/vue3';
- * import { composeStory } from '@storybook/vue3';
- * import Meta, { Primary as PrimaryStory } from './Button.stories';
- *
- * const Primary = composeStory(PrimaryStory, Meta);
- *
- * test('renders primary button with Hello World', () => {
- *   const { getByText } = render(Primary({ label: 'Hello world' }));
- *   expect(getByText(/Hello world/i)).not.toBeNull();
- * });
- *```
- *
- * @param story
- * @param componentAnnotations - e.g. (import Meta from './Button.stories')
- * @param [projectAnnotations] - e.g. (import * as projectAnnotations from '../.storybook/preview') this can be applied automatically if you use `setProjectAnnotations` in your setup files.
- * @param [exportsName] - in case your story does not contain a name and you want it to have a name.
- */
-export function composeStory<TArgs extends Args = Args>(
-  story: ComposedStory<VueRenderer, TArgs>,
-  componentAnnotations: Meta<TArgs | any>,
-  projectAnnotations?: ProjectAnnotations<VueRenderer>,
-  exportsName?: string
+export function composeStory<GenericArgs>(
+  story: TestingStory<GenericArgs>,
+  meta: ComponentAnnotations<VueRenderer>,
+  globalConfig: ProjectAnnotations<VueRenderer> = GLOBAL_STORYBOOK_PROJECT_ANNOTATIONS
 ) {
-  return originalComposeStory<VueRenderer, TArgs>(
-    story as ComposedStory<VueRenderer, Args>,
-    componentAnnotations,
-    projectAnnotations,
-    defaultProjectAnnotations,
-    exportsName
+
+  if (isInvalidStory(story)) {
+    throw new Error(
+      `Cannot compose story due to invalid format. @storybook/testing-vue3 expected a function/object but received ${typeof story} instead.`
+    );
+  }
+
+  if (story.story !== undefined) {
+    throw new Error(
+      `StoryFn.story object-style annotation is not supported. @storybook/testing-vue3 expects hoisted CSF stories.
+       https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#hoisted-csf-annotations`
+    );
+  }
+  const renderFn = typeof story === 'function' ? story : story.render ?? meta.render ?? globalRender;
+  const finalStoryFn = (context: StoryContext<GenericArgs>) => {
+    const { passArgsFirst = true } = context.parameters;
+    if (!passArgsFirst) {
+      throw new Error(
+        'composeStory does not support legacy style stories (with passArgsFirst = false).'
+      );
+    }
+    return renderFn(context.args, context);
+  };
+
+  const combinedDecorators = [
+    ...(story.decorators || []),
+    ...(meta?.decorators || []),
+    ...(globalConfig?.decorators || []),
+  ];
+
+  const decorated = decorateStory<VueRenderer>(
+    finalStoryFn as any,
+    combinedDecorators as any
   );
+
+  const defaultGlobals = Object.entries(
+    (globalConfig.globalTypes || {}) as Record<string, { defaultValue: any }>
+  ).reduce((acc, [arg, { defaultValue }]) => {
+    if (defaultValue) {
+      acc[arg] = defaultValue;
+    }
+    return acc;
+  }, {} as Record<string, { defaultValue: any }>);
+
+  const combinedParameters = combineParameters(
+    globalConfig.parameters || {},
+    meta?.parameters || {},
+    story.parameters || {},
+    { component: meta?.component }
+  )
+
+  const combinedArgs = {
+    ...meta?.args,
+    ...story.args
+  } as GenericArgs
+
+  const context = {
+    tags: [],
+    componentId: '',
+    kind: '',
+    title: '',
+    id: '',
+    name: '',
+    story: '',
+    argTypes: globalConfig.argTypes || {},
+    globals: defaultGlobals,
+    parameters: combinedParameters,
+    initialArgs: combinedArgs,
+    args: combinedArgs,
+    viewMode: 'story',
+    originalStoryFn: renderFn,
+    hooks: new HooksContext(),
+  } as StoryContext<GenericArgs>;
+
+  const composedStory = (extraArgs: Partial<GenericArgs>) => {
+    return decorated({
+      ...context,
+      args: {
+        ...combinedArgs, ...extraArgs
+      }
+    })
+  }
+
+  const boundPlay = ({ ...extraContext }: TestingStoryPlayContext<GenericArgs>) => {
+    const playFn = meta.play ?? story.play ?? (() => { });
+    // TODO: Fix this, it's not working
+    const stepFn = async () => (_label: string, innerPlay: Function) => {
+      return innerPlay(context)
+    }
+    // @ts-expect-error (just trying to get this to build)
+    return playFn({ ...context, ...extraContext, step: stepFn });
+  }
+
+  composedStory.storyName = story.storyName || story.name
+  composedStory.args = combinedArgs
+  composedStory.play = boundPlay;
+  composedStory.decorators = combinedDecorators
+  composedStory.parameters = combinedParameters
+
+  return composedStory
 }
 
-/**
- * Function that will receive a stories import (e.g. `import * as stories from './Button.stories'`)
- * and optionally projectAnnotations (e.g. `import * from '../.storybook/preview`)
- * and will return an object containing all the stories passed, but now as a composed component that has all args/parameters/decorators/etc combined and applied to it.
- *
- *
- * It's very useful for reusing stories in scenarios outside of Storybook like unit testing.
- *
- * Example:
- *```jsx
- * import { render } from '@testing-library/vue3';
- * import { composeStories } from '@storybook/vue3';
- * import * as stories from './Button.stories';
- *
- * const { Primary, Secondary } = composeStories(stories);
- *
- * test('renders primary button with Hello World', () => {
- *   const { getByText } = render(Primary({ label: 'Hello world' }));
- *   expect(getByText(/Hello world/i)).not.toBeNull();
- * });
- *```
- *
- * @param csfExports - e.g. (import * as stories from './Button.stories')
- * @param [projectAnnotations] - e.g. (import * as projectAnnotations from '../.storybook/preview') this can be applied automatically if you use `setProjectAnnotations` in your setup files.
- */
-export function composeStories<TModule extends Store_CSFExports<VueRenderer, any>>(
-  csfExports: TModule,
-  projectAnnotations?: ProjectAnnotations<VueRenderer>
-) {
-  // @ts-expect-error (Converted from ts-ignore)
-  const composedStories = originalComposeStories(csfExports, projectAnnotations, composeStory);
+export function composeStories<TModule extends StoryFile>(storiesImport: TModule, globalConfig?: ProjectAnnotations<VueRenderer>) {
+  const { default: meta, __esModule, ...stories } = storiesImport;
 
-  return composedStories as unknown as Omit<
-    StoriesWithPartialProps<VueRenderer, TModule>,
-    keyof Store_CSFExports
-  >;
+  // Compose an object containing all processed stories passed as parameters
+  const composedStories = objectEntries(stories).reduce<Partial<StoriesWithPartialProps<TModule>>>(
+    (storiesMap, [key, _story]) => {
+      const storyName = String(key)
+      // filter out non-story exports
+      if (!isValidStoryExport(storyName, meta)) {
+        return storiesMap;
+      }
+
+      const story = _story as StoryAnnotations
+      story.storyName = getStoryName(story) || storyName
+      const result = Object.assign(storiesMap, {
+        [key]: composeStory(story, meta, globalConfig)
+      });
+      return result;
+    },
+    {}
+  );
+  return composedStories;
 }
