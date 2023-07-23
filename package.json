@@ -59,8 +59,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "caniuse-lite": "^1.0.30001517"
   }
 }
