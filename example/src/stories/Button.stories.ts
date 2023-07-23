@@ -12,10 +12,14 @@ const meta = {
     onClick: { action: 'clicked' },
   },
   args: { primary: false },
+  excludeStories: /.*ImNotAStory$/
 } satisfies Meta<typeof Button>;
 
 export default meta;
 type CSF3Story = StoryObj<typeof meta>;
+
+// For testing purposes. Should be ignored in ComposeStories
+export const ImNotAStory = 123
 
 const Template: CSF2Story = (args) => ({
   components: { Button },
