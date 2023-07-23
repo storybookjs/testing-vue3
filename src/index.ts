@@ -23,7 +23,7 @@ import * as defaultProjectAnnotations from "@storybook/vue3/preview";
  * Example:
  *```jsx
  * // setup.js (for jest)
- * import { setProjectAnnotations } from '@storybook/vue3';
+ * import { setProjectAnnotations } from '@storybook/testing-vue3';
  * import * as projectAnnotations from './.storybook/preview';
  *
  * setProjectAnnotations(projectAnnotations);
@@ -59,7 +59,7 @@ export function setGlobalConfig(
  * Example:
  *```jsx
  * import { render } from '@testing-library/vue3';
- * import { composeStory } from '@storybook/vue3';
+ * import { composeStory } from '@storybook/testing-vue3';
  * import Meta, { Primary as PrimaryStory } from './Button.stories';
  *
  * const Primary = composeStory(PrimaryStory, Meta);
@@ -101,7 +101,7 @@ export function composeStory<TArgs extends Args = Args>(
  * Example:
  *```jsx
  * import { render } from '@testing-library/vue3';
- * import { composeStories } from '@storybook/vue3';
+ * import { composeStories } from '@storybook/testing-vue3';
  * import * as stories from './Button.stories';
  *
  * const { Primary, Secondary } = composeStories(stories);
