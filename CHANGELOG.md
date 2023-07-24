@@ -1,3 +1,25 @@
+# v1.0.0 (Mon Jul 24 2023)
+
+### Release Notes
+
+#### Support Storybook 7 ([#13](https://github.com/storybookjs/testing-vue3/pull/13))
+
+#### Support Storybook 7.0 ([#13](https://github.com/storybookjs/testing-vue3/pull/13))
+
+---
+
+#### 💥 Breaking Change
+
+- Support Storybook 7 [#13](https://github.com/storybookjs/testing-vue3/pull/13) ([@i-udas](https://github.com/i-udas) [@yannbf](https://github.com/yannbf) [@chakAs3](https://github.com/chakAs3))
+
+#### Authors: 3
+
+- [@i-udas](https://github.com/i-udas)
+- Chakir QATAB ([@chakAs3](https://github.com/chakAs3))
+- Yann Braga ([@yannbf](https://github.com/yannbf))
+
+---
+
 # v0.0.2 (Thu Feb 03 2022)
 
 #### 🐛 Bug Fix
