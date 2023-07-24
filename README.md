@@ -29,7 +29,7 @@ yarn add --dev @storybook/testing-vue3
 
 ### Storybook CSF
 
-This library requires you to be using Storybook's [Component Story Format (CSF)](https://storybook.js.org/docs/react/api/csf) and [hoisted CSF annotations](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#hoisted-csf-annotations), which is the recommended way to write stories since Storybook 6.
+This library requires you to be using Storybook's [Component Story Format (CSF)](https://storybook.js.org/docs/vue/api/csf) and [hoisted CSF annotations](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#hoisted-csf-annotations), which is the recommended way to write stories since Storybook 7.
 
 Essentially, if your stories look similar to this, you're good to go!
 
@@ -40,9 +40,9 @@ export default {
   component: Button,
 };
 
-export const Primary = () => ({
-  template: '<my-button primary />',
-});
+export const Primary = {
+  template: '<Button v-bind="args" />',
+};
 ```
 
 ### Global config
@@ -53,10 +53,10 @@ If you have global decorators/parameters/etc and want them applied to your stori
 
 ```tsx
 // setupFile.js <-- this will run before the tests in jest.
-import { setGlobalConfig } from '@storybook/testing-vue3';
+import { setProjectAnnotations } from '@storybook/testing-vue3';
 import * as globalStorybookConfig from './.storybook/preview'; // path of your preview.js file
 
-setGlobalConfig(globalStorybookConfig);
+setProjectAnnotations(globalStorybookConfig);
 ```
 
 For the setup file to be picked up, you need to pass it as an option to jest in your test command:

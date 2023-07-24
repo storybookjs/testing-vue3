@@ -1,45 +1,40 @@
-import type { ComponentOptions, ConcreteComponent } from "vue";
-import type {
-  ArgTypes,
-  Parameters as SbParameters,
-  BaseDecorators,
-} from "@storybook/addons";
-import type { Story } from "@storybook/vue3";
+// The types are recreated here because the original types are not 100% correct.
+// This will be fixed once this logic is moved into @storybook/vue3.
 
-export type StoryFnVueReturnType = string | ComponentOptions<any>;
-/**
- * Object representing the preview.ts module
- *
- * Used in storybook testing utilities.
- * @see [Unit testing with Storybook](https://storybook.js.org/docs/react/workflows/unit-testing)
- */
-export type GlobalConfig = {
-  decorators?: BaseDecorators<StoryFnVueReturnType>;
-  parameters?: SbParameters;
-  argTypes?: ArgTypes;
-  [key: string]: any;
+import type {
+    Args,
+    Renderer,
+    ComposedStoryPlayFn,
+    StoryId,
+    Parameters,
+    StoryFn,
+    StoryAnnotations,
+  } from '@storybook/types';
+
+type LooseAnnotatedStoryFn<TRenderer extends Renderer = Renderer, TArgs = Args> = (
+args?: TArgs
+) => (TRenderer & {
+T: TArgs;
+})['storyResult'];
+
+export type PreparedStoryFn<
+  TRenderer extends Renderer = Renderer,
+  TArgs = Args
+> = LooseAnnotatedStoryFn<TRenderer, TArgs> & {
+  play: ComposedStoryPlayFn<TRenderer, TArgs>;
+  args: TArgs;
+  id: StoryId;
+  storyName: string;
+  parameters: Parameters;
 };
 
-export type Head<T extends any[]> = T extends [...infer Head, any] ? Head : any[];
-
+type ComposedStory<TRenderer extends Renderer = Renderer, TArgs = Args> = StoryFn<TRenderer, TArgs> | StoryAnnotations<TRenderer, TArgs>;
 /**
- * A StoryFn where the context is already curried
- * in other words no more context param at the end
- */
-export type ContextedStory<GenericArgs> = (
-  ...params: Partial<Head<Parameters<Story<Partial<GenericArgs>>>>>
-) => ConcreteComponent;
-
-/**
- * T represents the whole es module of a stories file. K of T means named exports (basically the Story type)
+ * T represents the whole ES module of a stories file. K of T means named exports (basically the Story type)
  * 1. pick the keys K of T that have properties that are Story<AnyProps>
  * 2. infer the actual prop type for each Story
  * 3. reconstruct Story with Partial. Story<Props> -> Story<Partial<Props>>
  */
-export type StoriesWithPartialProps<T> = {
-  [K in keyof T as T[K] extends Story<any> ? K : never]: T[K] extends Story<
-    infer P
-  >
-    ? ContextedStory<P>
-    : unknown;
+export type StoriesWithPartialProps<TRenderer extends Renderer, TModule> = {
+    [K in keyof TModule]: TModule[K] extends ComposedStory<infer _, infer TProps> ? PreparedStoryFn<TRenderer, Partial<TProps>> : unknown;
 };
