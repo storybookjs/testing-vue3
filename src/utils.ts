@@ -8,7 +8,6 @@ export type TestingStory<TArgs = Args> = StoryAnnotations<VueRenderer, TArgs>;
 
 const invalidStoryTypes = new Set(['string', 'number', 'boolean', 'symbol']);
 
-
 export const isInvalidStory = (story?: any) => (!story || Array.isArray(story) || invalidStoryTypes.has(typeof story))
 
 type Entries<T> = {

@@ -8,7 +8,7 @@ type StoryFile = {
   [name: string]: StoryFn | Meta;
 };
 
-const compose = (entry: StoryFile): ReturnType<typeof composeStories> => {
+const compose = (entry: StoryFile): ReturnType<typeof composeStories<StoryFile>> => {
   try {
     return composeStories(entry);
   } catch (e) {

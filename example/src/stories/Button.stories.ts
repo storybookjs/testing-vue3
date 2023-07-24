@@ -101,6 +101,7 @@ export const CSF3ButtonWithRender: CSF3Story = {
 };
 
 export const CSF3InputFieldFilled: CSF3Story = {
+  ...CSF3Button,
   render: (args) => ({
     components: { Button },
     setup() {

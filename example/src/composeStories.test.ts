@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/vue";
 import * as stories from "./stories/Button.stories";
-import Button from "./Button.vue";
+import Button from "./stories/Button.vue";
 import { test, vi } from "vitest";
 import { composeStories, composeStory, setProjectAnnotations } from "../../dist";
 import { expectTypeOf } from 'expect-type';
@@ -84,7 +84,7 @@ describe('CSF3', () => {
 
     const { container } = render(CSF3InputFieldFilled());
 
-    await CSF3InputFieldFilled.play({ canvasElement: container });
+    await CSF3InputFieldFilled.play({ canvasElement: container as HTMLElement });
 
     const input = screen.getByTestId('input') as HTMLInputElement;
     expect(input.value).toEqual('Hello world!');

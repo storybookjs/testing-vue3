@@ -6,15 +6,15 @@ import {
 
 import type {
   Args,
-  ProjectAnnotations,
   ComposedStory,
+  ProjectAnnotations,
   Store_CSFExports,
-  StoriesWithPartialProps,
 } from '@storybook/types';
 import { deprecate } from '@storybook/client-logger';
 import type { VueRenderer, Meta } from "@storybook/vue3";
 //@ts-ignore
 import * as defaultProjectAnnotations from "@storybook/vue3/preview";
+import { PreparedStoryFn, StoriesWithPartialProps } from './types';
 
 /** Function that sets the global config of your storybook. The global config is the preview module of your .storybook folder.
  *
@@ -87,7 +87,7 @@ export function composeStory<TArgs extends Args = Args>(
     projectAnnotations,
     defaultProjectAnnotations as ProjectAnnotations<VueRenderer>,
     exportsName
-  );
+  ) as unknown as PreparedStoryFn<VueRenderer, Partial<TArgs>>;
 }
 
 /**
@@ -119,7 +119,6 @@ export function composeStories<TModule extends Store_CSFExports<VueRenderer, any
   csfExports: TModule,
   projectAnnotations?: ProjectAnnotations<VueRenderer>
 ) {
-  // @ts-expect-error (Converted from ts-ignore)
   const composedStories = originalComposeStories(csfExports, projectAnnotations, composeStory);
 
   return composedStories as unknown as Omit<
