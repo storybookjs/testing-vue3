@@ -12,28 +12,28 @@
     "test": "vitest"
   },
   "dependencies": {
-    "vue": "^3.2.47"
+    "vue": "^3.3.10"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^7.0.26",
-    "@storybook/addon-interactions": "^7.0.26",
-    "@storybook/addon-links": "^7.0.26",
-    "@storybook/blocks": "^7.0.26",
-    "@storybook/testing-library": "^0.2.0",
+    "@storybook/addon-essentials": "^7.6.0",
+    "@storybook/addon-interactions": "^7.6.0",
+    "@storybook/addon-links": "^7.6.0",
+    "@storybook/blocks": "^7.6.0",
+    "@storybook/testing-library": "^0.2.2",
     "@storybook/testing-vue3": "link:../",
-    "@storybook/vue3": "^7.0.26",
-    "@storybook/vue3-vite": "^7.0.26",
+    "@storybook/vue3": "^7.6.0",
+    "@storybook/vue3-vite": "^7.6.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/vue": "^7.0.0",
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue": "^4.5.1",
     "expect-type": "^0.16.0",
     "react": "^18.2.0",
     "jsdom": "^22.1.0",
     "react-dom": "^18.2.0",
-    "storybook": "^7.0.26",
-    "typescript": "^5.0.2",
-    "vite": "^4.3.9",
-    "vitest": "^0.32.2",
-    "vue-tsc": "^1.4.2"
+    "storybook": "^7.6.0",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.5",
+    "vitest": "^1.0.1",
+    "vue-tsc": "^1.8.24"
   }
 }
