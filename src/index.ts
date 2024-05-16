@@ -6,14 +6,17 @@ import {
 
 import type {
   Args,
-  ComposedStory,
+  ComposeStoryFn,
+  LegacyStoryAnnotationsOrFn,
   ProjectAnnotations,
+  Renderer,
   Store_CSFExports,
 } from '@storybook/types';
 import { deprecate } from '@storybook/client-logger';
 import type { VueRenderer, Meta } from "@storybook/vue3";
-//@ts-ignore
-import * as defaultProjectAnnotations from "@storybook/vue3/preview";
+
+// @ts-ignore
+import * as defaultProjectAnnotations from "@storybook/vue3/dist/entry-preview.mjs" ;
 import { PreparedStoryFn, StoriesWithPartialProps } from './types';
 
 /** Function that sets the global config of your storybook. The global config is the preview module of your .storybook folder.
@@ -76,13 +79,13 @@ export function setGlobalConfig(
  * @param [exportsName] - in case your story does not contain a name and you want it to have a name.
  */
 export function composeStory<TArgs extends Args = Args>(
-  story: ComposedStory<VueRenderer, TArgs>,
+  story: LegacyStoryAnnotationsOrFn<VueRenderer, TArgs>,
   componentAnnotations: Meta<TArgs | any>,
   projectAnnotations?: ProjectAnnotations<VueRenderer>,
   exportsName?: string
 ) {
   return originalComposeStory<VueRenderer, TArgs>(
-    story as ComposedStory<VueRenderer, Args>,
+    story as LegacyStoryAnnotationsOrFn<VueRenderer>,
     componentAnnotations,
     projectAnnotations,
     defaultProjectAnnotations as ProjectAnnotations<VueRenderer>,
@@ -112,14 +115,14 @@ export function composeStory<TArgs extends Args = Args>(
  * });
  *```
  *
- * @param csfExports - e.g. (import * as stories from './Button.stories')
+ * @param storiesImport - e.g. (import * as stories from './Button.stories')
  * @param [projectAnnotations] - e.g. (import * as projectAnnotations from '../.storybook/preview') this can be applied automatically if you use `setProjectAnnotations` in your setup files.
  */
 export function composeStories<TModule extends Store_CSFExports<VueRenderer, any>>(
-  csfExports: TModule,
-  projectAnnotations?: ProjectAnnotations<VueRenderer>
+  storiesImport: TModule,
+  globalConfig?: ProjectAnnotations<VueRenderer>
 ) {
-  const composedStories = originalComposeStories(csfExports, projectAnnotations, composeStory);
+  const composedStories = originalComposeStories(storiesImport as Store_CSFExports, globalConfig as ProjectAnnotations<Renderer>, composeStory as ComposeStoryFn);
 
   return composedStories as unknown as Omit<
     StoriesWithPartialProps<VueRenderer, TModule>,
