@@ -1,3 +1,32 @@
+> ⚠️ IMPORTANT NOTE:
+
+Hey there! I wanted to thank you for using `@storybook/testing-vue3`!
+
+`@storybook/testing-vue3` has been promoted to a first-class Storybook functionality in Storybook 8. This means that you no longer need this package, and this package will not be worked on anymore. Instead, you can import the same utilities, but from the `@storybook/vue3` package.
+
+Please do the following:
+
+- [Upgrade to Storybook 8](https://storybook.js.org/docs/8.0/migration-guide) if you haven't already
+- Uninstall `@storybook/testing-vue3`
+- Update your imports from `@storybook/testing-vue3` to `@storybook/vue3`
+
+```diff
+// Component.test.js
+- import { composeStories } from '@storybook/testing-vue3';
++ import { composeStories } from '@storybook/vue3';
+
+// setup-files.js
+- import { setProjectAnnotations } from '@storybook/testing-vue3';
++ import { setProjectAnnotations } from '@storybook/vue3';
+```
+
+Please, if even after migrating, you are still experiencing issues, report them in the [Storybook monorepo](https://github.com/storybookjs/storybook).
+
+Thank you so much for this journey!
+
+---------------------------
+
+
 <p align="center">
   <img src="https://user-images.githubusercontent.com/1671563/119191947-9ba7a400-ba7f-11eb-8658-2b7056f1cd12.png" alt="Storybook Testing Vue3" width="100" />
 </p>
